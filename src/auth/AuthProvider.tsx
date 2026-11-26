@@ -125,6 +125,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     void restoreWithToken(token)
   }, [restoreWithToken])
 
+  const handleUnauthorized = useCallback(() => {
+    clearSessionAndRedirect('unauthorized')
+  }, [clearSessionAndRedirect])
+
   useEffect(() => {
     if (initialRestoreStartedRef.current) return
 
@@ -199,6 +203,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const value = useMemo<AuthContextValue>(
     () => ({
       status: state.status,
+      token: state.token,
       user: state.user,
       restoreError: state.error,
       intent: state.intent,
@@ -206,8 +211,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
       register,
       logout,
       retry,
+      handleUnauthorized,
     }),
-    [state.status, state.user, state.error, state.intent, login, register, logout, retry],
+    [
+      state.status,
+      state.token,
+      state.user,
+      state.error,
+      state.intent,
+      login,
+      register,
+      logout,
+      retry,
+      handleUnauthorized,
+    ],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
