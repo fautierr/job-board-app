@@ -3,6 +3,7 @@ import type { AuthIntent, AuthStatus, LoginRequest, PublicUser, RegisterRequest 
 
 export interface AuthContextValue {
   status: AuthStatus
+  token: string | null
   user: PublicUser | null
   restoreError: string | null
   intent: AuthIntent | null
@@ -10,6 +11,7 @@ export interface AuthContextValue {
   register: (values: RegisterRequest) => Promise<void>
   logout: () => void
   retry: () => void
+  handleUnauthorized: () => void
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)

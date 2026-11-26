@@ -8,6 +8,8 @@ interface FormFieldProps {
   hint?: string
   autoComplete?: string
   maxLength?: number
+  multiline?: boolean
+  rows?: number
 }
 
 export function FormField({
@@ -20,11 +22,17 @@ export function FormField({
   hint,
   autoComplete,
   maxLength,
+  multiline = false,
+  rows = 6,
 }: FormFieldProps) {
   const descriptionIds = [
     hint ? `${id}-hint` : null,
     error ? `${id}-error` : null,
   ].filter((item): item is string => item !== null)
+
+  const fieldClass = `mt-1.5 w-full rounded-lg border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted/70 transition-colors focus:outline-none ${
+    error ? 'border-danger' : 'border-line focus:border-accent'
+  }`
 
   return (
     <div>
@@ -32,19 +40,30 @@ export function FormField({
         {label}
       </label>
 
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        autoComplete={autoComplete}
-        maxLength={maxLength}
-        aria-invalid={Boolean(error)}
-        aria-describedby={descriptionIds.length > 0 ? descriptionIds.join(' ') : undefined}
-        className={`mt-1.5 w-full rounded-lg border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted/70 transition-colors focus:outline-none ${
-          error ? 'border-danger' : 'border-line focus:border-accent'
-        }`}
-      />
+      {multiline ? (
+        <textarea
+          id={id}
+          value={value}
+          rows={rows}
+          maxLength={maxLength}
+          aria-invalid={Boolean(error)}
+          aria-describedby={descriptionIds.length > 0 ? descriptionIds.join(' ') : undefined}
+          onChange={(event) => onChange(event.target.value)}
+          className={`${fieldClass} resize-y leading-6`}
+        />
+      ) : (
+        <input
+          id={id}
+          type={type}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          autoComplete={autoComplete}
+          maxLength={maxLength}
+          aria-invalid={Boolean(error)}
+          aria-describedby={descriptionIds.length > 0 ? descriptionIds.join(' ') : undefined}
+          className={fieldClass}
+        />
+      )}
 
       {hint && (
         <p id={`${id}-hint`} className="mt-1.5 text-xs text-muted">

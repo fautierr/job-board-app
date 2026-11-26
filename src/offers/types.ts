@@ -35,7 +35,8 @@ export type ContractType =
 
 export type OfferStatus = 'PUBLISHED' | 'PAUSED' | 'CLOSED'
 
-export interface PublicOffer {
+/** DTO base del contrato: es lo que devuelven las rutas propias del empleador. */
+export interface OfferDto {
   id: string
   title: string
   description: string
@@ -47,6 +48,10 @@ export interface PublicOffer {
   status: OfferStatus
   createdAt: string
   updatedAt: string
+}
+
+/** `companyName` solo existe en las respuestas públicas (`GET /api/offers`). */
+export interface PublicOffer extends OfferDto {
   companyName: string
 }
 
