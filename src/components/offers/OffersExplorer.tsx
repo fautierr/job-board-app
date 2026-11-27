@@ -1,6 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useAuth } from '../../auth/useAuth'
 import { ArrowLeftIcon } from '../icons'
+import { OfferApplicationSection } from '../applications/OfferApplicationSection'
+import { useCandidateApplications } from '../../applications/useCandidateApplications'
 import { useToast } from '../toast/useToast'
 import { OfferDetailPanel } from './OfferDetailPanel'
 import { OfferDetailSkeleton } from './OfferDetailSkeleton'
@@ -31,6 +34,8 @@ export function OffersExplorer({ offerId }: OffersExplorerProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const { success: showSuccess, error: showError } = useToast()
+  const { user } = useAuth()
+  const candidateApplications = useCandidateApplications()
   const isDesktop = useIsDesktop()
 
   const search = searchParams.toString()
@@ -271,6 +276,7 @@ export function OffersExplorer({ offerId }: OffersExplorerProps) {
             offer={offer}
             selected={offer.id === effectiveOfferId}
             detailHref={`/offers/${encodeURIComponent(offer.id)}${location.search}`}
+            applied={candidateApplications.appliedOfferIds.has(offer.id)}
           />
         ))}
       </ul>
@@ -301,7 +307,25 @@ export function OffersExplorer({ offerId }: OffersExplorerProps) {
     }
 
     if (canShowDetailOffer && detail.offer) {
-      return <OfferDetailPanel offer={detail.offer} isUpdating={detailIsUpdating} />
+      const applied = candidateApplications.appliedOfferIds.has(detail.offer.id)
+      const viewerRole = user?.role ?? null
+
+      return (
+        <OfferDetailPanel
+          offer={detail.offer}
+          isUpdating={detailIsUpdating}
+          applicationSection={
+            <OfferApplicationSection
+              key={`${detail.offer.id}:${viewerRole ?? 'guest'}:${applied ? 'applied' : 'pending'}`}
+              offerId={detail.offer.id}
+              viewerRole={viewerRole}
+              applied={applied}
+              applicationsLoading={candidateApplications.loading}
+              apply={candidateApplications.apply}
+            />
+          }
+        />
+      )
     }
 
     if (detailIsPending || (list.loading && !list.error)) {
