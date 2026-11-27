@@ -16,25 +16,23 @@ The API contract is read-only from the frontend repository. Do not modify it.
 
 ## Entry points
 
-- `index.html` → `src/main.tsx`: placeholder for the future real application.
-- `mock.html` → `src/mock/main.tsx`: current visual design mock.
-- `vite.config.ts` builds both entries.
-
-Keep the mock isolated. Do not put mock UI in `src/main.tsx` or import `src/mock/**` from the real application.
+- `index.html` → `src/main.tsx`: única entrada de la aplicación.
+- `vite.config.ts` compila esa entrada y genera el output en `dist/`.
 
 ## Commands
 
 - `npm run dev`: starts the development server.
-- The mock is available at `http://localhost:5173/mock.html`.
 - `npm run build`: runs `tsc -b && vite build`.
 - `npm run lint`: runs ESLint.
+- `npm test`: runs the Vitest suite.
+- `npm run test:watch`: runs Vitest in watch mode.
 
 There is no separate typecheck script; the build includes TypeScript checking.
 
 For preview checks:
 
 - `npm run preview -- --port 4173 --strictPort`
-- Open `/mock.html`.
+- Open `/`.
 - Stop the preview process when finished.
 
 ## Technology and conventions
@@ -45,6 +43,8 @@ For preview checks:
 - Inter is loaded locally through `@fontsource-variable/inter`. Do not replace it with Google Fonts or an external CDN.
 - Use React Router when implementing application navigation.
 - Use the native `fetch` API for backend requests unless a concrete requirement justifies another solution.
+- `VITE_API_BASE_URL` is required; copy `.env.example` to `.env` for local development.
+- Node.js is pinned to `22.22.3` in `.node-version` for local and CI builds.
 
 TypeScript is configured in strict mode:
 
@@ -87,51 +87,6 @@ Avoid:
 - Visual elements that do not improve usability.
 
 Use the existing design tokens instead of introducing arbitrary colors or styles.
-
-## Mock constraints
-
-The mock is visual-only.
-
-- Do not add routing, authentication, API calls, persistence, or real submission flows to the mock.
-- Do not treat mock data as the source of truth for backend behavior.
-- Keep the responsive behavior: list/detail switching below `md`, two panels from `md` up, and the mobile back button.
-
-Mock offer data must follow the actual backend API contract.
-
-The public offer fields are:
-
-- `id`
-- `title`
-- `description`
-- `category`
-- `seniority`
-- `workMode`
-- `workday`
-- `contractType`
-- `status`
-- `createdAt`
-- `updatedAt`
-- `companyName` in public responses
-
-Do not introduce unsupported fields such as location, separate responsibilities, or separate requirements.
-
-The supported search and filter fields are:
-
-- `q`: searches title, description, and company name.
-- `category`
-- `seniority`
-- `workMode`
-- `workday`
-- `contractType`
-
-“Ya postulado” must be derived from the candidate's applications, not stored as an offer property.
-
-The application request body supports only:
-
-- `candidateName`
-- `phone`
-
-Do not invent unsupported application fields or states.
 
 ## Backend integration and security
 
