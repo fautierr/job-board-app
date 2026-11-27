@@ -42,28 +42,22 @@ No se usan herramientas E2E, librerías de animación ni clientes HTTP externos:
 
 Las responsabilidades están separadas por dominio:
 
-| Carpeta | Responsabilidad |
-|---|---|
-| `src/api` | Cliente `fetch` centralizado y normalización de errores de la API. |
-| `src/auth` | Sesión, JWT, registro/login y estado de autenticación. |
-| `src/offers` | Consulta pública de ofertas, filtros, tipos y formato. |
-| `src/employer` | Operaciones de empleador sobre ofertas y estados. |
-| `src/applications` | Postulaciones del candidato y de cada oferta. |
-| `src/pages`, `src/components` | Pantallas y componentes de presentación. |
-| `src/styles` | Tokens de diseño y estilos globales de Tailwind. |
-| `src/test` | Helpers, fixtures y setup de los tests automatizados. |
+| Carpeta                       | Responsabilidad                                                    |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `src/api`                     | Cliente `fetch` centralizado y normalización de errores de la API. |
+| `src/auth`                    | Sesión, JWT, registro/login y estado de autenticación.             |
+| `src/offers`                  | Consulta pública de ofertas, filtros, tipos y formato.             |
+| `src/employer`                | Operaciones de empleador sobre ofertas y estados.                  |
+| `src/applications`            | Postulaciones del candidato y de cada oferta.                      |
+| `src/pages`, `src/components` | Pantallas y componentes de presentación.                           |
+| `src/styles`                  | Tokens de diseño y estilos globales de Tailwind.                   |
+| `src/test`                    | Helpers, fixtures y setup de los tests automatizados.              |
 
 `index.html` es la única entrada de la aplicación y compila en `dist/`.
 
 ## Integración con el backend
 
 El frontend consume la API REST documentada en `docs/API_CONTRACT.md` del repositorio backend (ese contrato es la fuente de verdad; acá no se reproduce su detalle). Los módulos utilizados son autenticación, ofertas y postulaciones.
-
-- La URL base se obtiene de `VITE_API_BASE_URL` y se usa en `src/api/http.ts`; no hay una URL de producción fija en el código.
-- El JWT se guarda en `localStorage` y se envía como header `Authorization: Bearer <token>` en las operaciones autenticadas.
-- Los identificadores de usuario y los roles nunca se envían en los bodies: se derivan del token y se validan en el backend.
-- Las respuestas y los errores se parsean según el contrato; la interfaz muestra mensajes de validación y de error sin exponer datos sensibles.
-- CORS se configura en el backend: el origen del frontend debe figurar en `CORS_ALLOWED_ORIGINS`. Esto no está resuelto automáticamente por el despliegue.
 
 ## Requisitos previos
 
@@ -86,9 +80,9 @@ VITE_API_BASE_URL=http://localhost:3000/api
 
 ## Variables de entorno
 
-| Variable | Obligatoria | Descripción |
-|---|---|---|
-| `VITE_API_BASE_URL` | Sí | URL base de la API, incluido el prefijo `/api`. Se usa en build y en desarrollo. |
+| Variable            | Obligatoria | Descripción                                                                      |
+| ------------------- | ----------- | -------------------------------------------------------------------------------- |
+| `VITE_API_BASE_URL` | Sí          | URL base de la API, incluido el prefijo `/api`. Se usa en build y en desarrollo. |
 
 No hay secretos en el frontend: las variables `VITE_*` terminan incluidas en el bundle, por lo que nunca deben contener contraseñas, claves ni tokens. `.env` está ignorado por Git; `.env.example` es solo una plantilla.
 
@@ -120,24 +114,3 @@ Ejecuta `tsc -b` y luego `vite build`. El resultado queda en `dist/` y contiene 
 ```bash
 npm run preview
 ```
-
-## Preparación para Cloudflare Pages
-
-El repositorio está listo para importarse desde **Cloudflare Dashboard → Workers & Pages → Create application → Pages → Import an existing Git repository** con:
-
-| Opción | Valor |
-|---|---|
-| Framework preset | React (Vite) |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Root directory | raíz del repositorio |
-
-Configurar `VITE_API_BASE_URL` en **Settings → Environment variables** tanto para Production como para Preview, con la URL real del backend.
-
-No se agregó `_redirects` ni `404.html`: Cloudflare Pages ya sirve `index.html` como fallback para rutas del cliente cuando no hay un asset que coincida, siempre que no exista un `404.html` en la raíz del output. Las rutas principales (`/offers`, `/offers/:offerId`, `/login`, `/register`, `/candidate/applications`, `/employer/offers`, `/employer/offers/new`, `/employer/offers/:offerId/edit` y `/employer/offers/:offerId/applications`) funcionan con ese comportamiento.
-
-La versión de Node se fija mediante `.node-version`, que Cloudflare Pages respeta durante el build.
-
-## Estado del despliegue
-
-El despliegue todavía no se realizó. Antes de hacerlo falta definir la URL definitiva del backend, configurar la variable de entorno en Cloudflare Pages y habilitar el dominio del frontend en `CORS_ALLOWED_ORIGINS` del backend.
