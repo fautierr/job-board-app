@@ -76,6 +76,13 @@ export function EmployerOfferCard({
             Editar
           </Link>
 
+          <Link
+            to={`/employer/offers/${offer.id}/applications`}
+            className="rounded-lg border border-line px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:border-accent hover:text-accent"
+          >
+            Postulantes
+          </Link>
+
           {transitions.map((status) => (
             <button
               key={status}

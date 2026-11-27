@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BriefcaseIcon, ClockIcon } from '../icons'
+import { AppliedBadge } from '../applications/AppliedBadge'
 import {
   contractTypeLabels,
   seniorityLabels,
@@ -22,9 +23,15 @@ interface OfferListItemProps {
   offer: PublicOffer
   selected: boolean
   detailHref: string
+  applied?: boolean
 }
 
-export function OfferListItem({ offer, selected, detailHref }: OfferListItemProps) {
+export function OfferListItem({
+  offer,
+  selected,
+  detailHref,
+  applied = false,
+}: OfferListItemProps) {
   return (
     <li>
       <Link
@@ -68,6 +75,7 @@ export function OfferListItem({ offer, selected, detailHref }: OfferListItemProp
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-1.5 pl-11">
+          {applied && <AppliedBadge />}
           <MetaTag>{seniorityLabels[offer.seniority]}</MetaTag>
           <MetaTag icon={<BriefcaseIcon className="h-3 w-3" />}>
             {workModeLabels[offer.workMode]}

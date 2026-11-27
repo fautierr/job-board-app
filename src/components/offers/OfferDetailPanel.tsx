@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ArrowRightIcon, ClockIcon } from '../icons'
+import { ClockIcon } from '../icons'
 import {
   categoryLabels,
   contractTypeLabels,
@@ -30,9 +30,14 @@ function SectionHeading({ children }: { children: ReactNode }) {
 interface OfferDetailPanelProps {
   offer: PublicOffer
   isUpdating?: boolean
+  applicationSection?: ReactNode
 }
 
-export function OfferDetailPanel({ offer, isUpdating = false }: OfferDetailPanelProps) {
+export function OfferDetailPanel({
+  offer,
+  isUpdating = false,
+  applicationSection,
+}: OfferDetailPanelProps) {
   return (
     <div className="space-y-4" aria-busy={isUpdating}>
       <section className="rounded-xl border border-line bg-surface p-5 shadow-panel sm:p-6">
@@ -86,19 +91,9 @@ export function OfferDetailPanel({ offer, isUpdating = false }: OfferDetailPanel
           {offer.description}
         </p>
 
-        <div className="mt-5 flex flex-col gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs leading-5 text-muted">
-            La postulación estará disponible en una etapa posterior.
-          </p>
-          <button
-            type="button"
-            disabled
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:bg-accent/40 sm:w-auto sm:min-w-[176px]"
-          >
-            Postularme
-            <ArrowRightIcon className="h-4 w-4" />
-          </button>
-        </div>
+        {applicationSection && (
+          <div className="mt-5 border-t border-line pt-5">{applicationSection}</div>
+        )}
       </section>
     </div>
   )

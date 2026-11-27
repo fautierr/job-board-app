@@ -7,6 +7,7 @@ import { getCurrentUser, login as loginRequest, register as registerRequest } fr
 import { AuthContext } from './AuthContext'
 import type { AuthContextValue } from './AuthContext'
 import { getExpirationTime } from './jwt'
+import { readAuthRedirectPath } from './redirectMessage'
 import { homeForRole } from './role'
 import { authReducer, initialAuthState } from './reducer'
 import { getTokenStorageKey, readToken, removeToken, writeToken } from './storage'
@@ -83,9 +84,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       writeToken(result.token)
       tokenRef.current = result.token
       dispatch({ type: 'SIGN_IN', token: result.token, user: result.user })
-      navigate(homeForRole(result.user.role), { replace: true })
+      navigate(readAuthRedirectPath(location.state, result.user.role) ?? homeForRole(result.user.role), {
+        replace: true,
+      })
     },
-    [clearExpiryTimer, navigate],
+    [clearExpiryTimer, location.state, navigate],
   )
 
   const login = useCallback(
